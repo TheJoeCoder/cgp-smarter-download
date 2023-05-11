@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>%URLTITLE%</title>
+    <style>
+        html, body {
+            width: %WIDTH%;
+            height: %HEIGHT%;
+            margin: 0;
+            padding: 0;
+            background-color: %BACKGROUNDCOLOR%;
+        }
+        #background {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        #textlayer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        #svglayer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+        #links {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+        }
+        .link {
+            background-color: rgba(0, 0, 0, 0);
+            color: rgba(0, 0, 0, 0);
+        }
+        .link:hover {
+            background-color: %HOVER_COLOUR%;
+            color: %HOVER_COLOUR%;
+        }
+    </style>
+</head>
+<body>
+    %BACKGROUND%
+    %TEXTLAYER%
+    %SVG%
+    <div id="links">
+        %LINKS%
+    </div>
+</body>
+</html>
