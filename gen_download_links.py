@@ -1,4 +1,4 @@
-import json, sys
+import json, os, requests
 
 bookId = "ACEHR42DF"
 
@@ -11,13 +11,48 @@ with open("template/background.html", "r") as backgroundFile:
 with open("template/text-layer.html", "r") as textLayerFile:
     textLayerHtml = textLayerFile.read()
     textLayerFile.close()
-with open("tenplate/vector-layer.html", "r") as vectorLayerFile:
+with open("template/svg.html", "r") as vectorLayerFile:
     vectorLayerHtml = vectorLayerFile.read()
     vectorLayerFile.close()
 with open("template/link.html", "r") as linkFile:
     linkHtml = linkFile.read()
     linkFile.close()
 
+with open("cookies.txt", "r") as cookiesFile:
+    cookies_contents = cookiesFile.read()
+    cookies_array = cookies_contents.split(";")
+    cookies = {}
+    for cookie in cookies_array:
+        cookie_split = cookie.split("=")
+        cookies[cookie_split[0].strip()] = cookie_split[1]
+    cookiesFile.close()
+
+if (not os.path.exists("output")):
+    os.mkdir("output")
+
+bookPath = os.path.join("output", bookId)
+
+if (not os.path.exists(bookPath)):
+    os.mkdir(bookPath)
+
+def download(url):
+    urlbase = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/"
+    # Make request
+    res = requests.get(url, cookies=cookies)
+    if (res.status_code == 200):
+        # Status was OK
+        # Get filename
+        filename_replaced = url.replace(urlbase, "")
+        save_filename = os.path.join(bookPath, filename_replaced)
+        save_dir = os.path.dirname(save_filename)
+        # Create directory if not exists
+        os.makedirs(save_dir, exist_ok=True)
+        # Save file
+        with open(save_filename, "wb") as saveFile:
+            saveFile.write(res.content)
+            saveFile.close()
+        return save_filename
+    return None
 
 # pager.js provides all data about pages, substrates, text links, etc
 # pager is located in one of two places:
@@ -127,6 +162,12 @@ if ("defaults" in pages):
 
 for page_name, page_contents in pages.items():
     if (page_name == "default"):
+        # Default page. Already processed, so skip.
+        continue
+    try:
+        page_number = int(page_name)
+    except ValueError:
+        # Not a page we can process. Skip.
         continue
     # Get page data from json into variables
     background_image_width = default_background_image_width
@@ -209,10 +250,55 @@ for page_name, page_contents in pages.items():
         links = page_contents["links"]
     # generate template
     max_substrate_level = len(substratesizes)
-    max_text_level = len(textsizes)
-    
-    #### TODO: add code to render page ####
-    continue
+    pagenumber_padded = str(page_number).zfill(4)
+    substrate_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-html5-substrates/page" + pagenumber_padded + "_" + str(max_substrate_level) + "." + substrate_format
+    doText = (not has_notext) and has_textlayer
+    if doText:
+        max_text_level = len(textsizes)
+        text_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-textlayers/page" + pagenumber_padded + "_" + str(max_text_level) + "." + substrate_format
+    doVectorText = (not has_notext) and has_vectortext
+    if doVectorText:
+        vector_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-vectorlayers/" + pagenumber_padded + ".svg"
+    # Generate page template
+    page_template = baseHtml.replace("%BACKGROUND%", backgroundHtml)
+    page_template = page_template.replace("%PAGE_SUBSTRATE%", substrate_url)
+    if (doText):
+        page_template = page_template.replace("%TEXTLAYER%", textLayerHtml)
+        page_template = page_template.replace("%TEXT_SUBSTRATE%", text_url)
+    else:
+        page_template = page_template.replace("%TEXTLAYER%", "")
+    if(doVectorText):
+        page_template = page_template.replace("%SVG%", vectorLayerHtml)
+        page_template = page_template.replace("%VECTOR_LAYER%", vector_url)
+    else:
+        page_template = page_template.replace("%SVG%", "")
+    page_template = page_template.replace("%URLTITLE%", urlheader)
+    page_template = page_template.replace("%DISPLAYNAME%", displayname)
+    page_template = page_template.replace("%WIDTH%", str(width))
+    page_template = page_template.replace("%HEIGHT%", str(height))
+    page_template = page_template.replace("%BACKGROUNDCOLOR%", background_colour)
+    page_template = page_template.replace("%HOVER_COLOUR%", str(link_hover_colour))
+    links_text = ""
+    for link in links:
+        lnk_width = link["rect"][0]
+        lnk_height = link["rect"][1]
+        lnk_x = link["rect"][2]
+        lnk_y = link["rect"][3]
+        lnk_url = link["url"]
+        lnk_zindex = link["zIndex"]
+        link_template = linkHtml.replace("%WIDTH%", str(lnk_width))
+        link_template = link_template.replace("%HEIGHT%", str(lnk_height))
+        link_template = link_template.replace("%X%", str(lnk_x))
+        link_template = link_template.replace("%Y%", str(lnk_y))
+        link_template = link_template.replace("%URL%", lnk_url)
+        link_template = link_template.replace("%TARGET%", link_target)
+        link_template = link_template.replace("%ZINDEX%", str(lnk_zindex))
+        links_text += link_template
+    page_template = page_template.replace("%LINKS%", links_text)
+    # write page template to file
+    with open(os.path.join(bookPath, pagenumber_padded + ".html"), "w") as f:
+        f.write(page_template)
+        f.close()
 
 #### TODO: add code to merge all into pdf with bookmarks ####
 
