@@ -346,7 +346,8 @@ for page_name, page_contents in pages.items():
         link_template = link_template.replace("%ZINDEX%", str(lnk_zindex))
         links_text += link_template
         logger.debug("Generated link attribute for " + lnk_url)
-    page_template = page_template.replace("%LINKS%", links_text)
+    # page_template = page_template.replace("%LINKS%", links_text)
+    page_template = page_template.replace("%LINKS%", "") # TODO: fix links
     # write page template to file
     logger.debug("Writing page template to file")
     with open(os.path.join(bookPath, pagenumber_padded + ".html"), "w") as f:
