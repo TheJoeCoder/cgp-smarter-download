@@ -1,44 +1,57 @@
-import json, os, requests
+import json, os, requests, logging
 
 bookId = "ACEHR42DF"
 
+logging.debug("Opening template file base.html")
 with open("template/base.html", "r") as baseFile:
     baseHtml = baseFile.read()
     baseFile.close()
+logging.debug("Opening template file background.html")
 with open("template/background.html", "r") as backgroundFile:
     backgroundHtml = backgroundFile.read()
     backgroundFile.close()
+logging.debug("Opening template file text-layer.html")
 with open("template/text-layer.html", "r") as textLayerFile:
     textLayerHtml = textLayerFile.read()
     textLayerFile.close()
+logging.debug("Opening template file svg.html")
 with open("template/svg.html", "r") as vectorLayerFile:
     vectorLayerHtml = vectorLayerFile.read()
     vectorLayerFile.close()
+logging.debug("Opening template file link.html")
 with open("template/link.html", "r") as linkFile:
     linkHtml = linkFile.read()
     linkFile.close()
 
+logging.debug("Opening Cookies")
 with open("cookies.txt", "r") as cookiesFile:
     cookies_contents = cookiesFile.read()
     cookies_array = cookies_contents.split(";")
+    logging.info("Loading " + str(len(cookies_array)) + " cookies")
     cookies = {}
     for cookie in cookies_array:
         cookie_split = cookie.split("=")
         cookies[cookie_split[0].strip()] = cookie_split[1]
     cookiesFile.close()
+logging.info("Cookies loaded")
 
 if (not os.path.exists("output")):
     os.mkdir("output")
+    logging.debug("Created output directory")
 
 bookPath = os.path.join("output", bookId)
 
 if (not os.path.exists(bookPath)):
     os.mkdir(bookPath)
+    logging.debug("Created book output directory")
 
 def download(url):
     urlbase = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/"
+    logging.debug("Downloading " + url)
     # Make request
     res = requests.get(url, cookies=cookies)
+    logging.debug("Response code: " + str(res.status_code))
+    logging.debug("Response length: " + str(len(res.content)))
     if (res.status_code == 200):
         # Status was OK
         # Get filename
@@ -51,13 +64,17 @@ def download(url):
         with open(save_filename, "wb") as saveFile:
             saveFile.write(res.content)
             saveFile.close()
-        return save_filename
+        logging.debug("Saved file to " + save_filename)
+        return save_filename, filename_replaced
+    # If we're still here, download has failed
+    logging.error("Download failed of file " + url)
     return None
 
 # pager.js provides all data about pages, substrates, text links, etc
 # pager is located in one of two places:
 # https://library.cgpbooks.co.uk/digitalcontent/{bookId}/assets/pager.js
 # https://library.cgpbooks.co.uk/digitalcontent/{bookId}/assets/common/pager.js
+logging.debug("Opening pager.json file")
 with open("pager.json", "r") as pagerFile:
     pagerJson = json.loads(pagerFile.read())
     pagerFile.close()
@@ -105,6 +122,7 @@ default_urlheader = ""
 default_links = []
 
 if ("defaults" in pages):
+    logging.debug("Parsing default page attributes")
     page_contents = pages["defaults"]
     # edit default attributes
     if ("backgroundImageWidth" in page_contents):
@@ -159,15 +177,20 @@ if ("defaults" in pages):
         default_urlheader = page_contents["urlHeader"]
     if ("links" in page_contents):
         default_links = page_contents["links"]
+else:
+    logging.warning("No default page attributes found")
 
 for page_name, page_contents in pages.items():
+    logging.debug("Processing page " + page_name)
     if (page_name == "default"):
         # Default page. Already processed, so skip.
+        logging.debug("Skipping default page")
         continue
     try:
         page_number = int(page_name)
     except ValueError:
         # Not a page we can process. Skip.
+        logging.warning("Skipping page " + page_name + " as it is not a number")
         continue
     # Get page data from json into variables
     background_image_width = default_background_image_width
@@ -252,14 +275,27 @@ for page_name, page_contents in pages.items():
     max_substrate_level = len(substratesizes)
     pagenumber_padded = str(page_number).zfill(4)
     substrate_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-html5-substrates/page" + pagenumber_padded + "_" + str(max_substrate_level) + "." + substrate_format
+    fpath1_full, fpath_rel = download(substrate_url)
+    if (fpath1_full != None):
+        substrate_url = "./" + fpath_rel
+        logging.debug("Using substrate url " + substrate_url)
     doText = (not has_notext) and has_textlayer
-    if doText:
+    if (doText):
         max_text_level = len(textsizes)
         text_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-textlayers/page" + pagenumber_padded + "_" + str(max_text_level) + "." + substrate_format
+        fpath2_full, fpath_rel = download(text_url)
+        if (fpath2_full != None):
+            text_url = "./" + fpath_rel
+            logging.debug("Using text url " + text_url)
     doVectorText = (not has_notext) and has_vectortext
     if doVectorText:
         vector_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-vectorlayers/" + pagenumber_padded + ".svg"
+        fpath3_full, fpath_rel = download(vector_url)
+        if (fpath3_full != None):
+            vector_url = "./" + fpath_rel
+            logging.debug("Using vector url " + vector_url)
     # Generate page template
+    logging.debug("Generating page template")
     page_template = baseHtml.replace("%BACKGROUND%", backgroundHtml)
     page_template = page_template.replace("%PAGE_SUBSTRATE%", substrate_url)
     if (doText):
@@ -294,8 +330,10 @@ for page_name, page_contents in pages.items():
         link_template = link_template.replace("%TARGET%", link_target)
         link_template = link_template.replace("%ZINDEX%", str(lnk_zindex))
         links_text += link_template
+        logging.debug("Generated link attribute for " + lnk_url)
     page_template = page_template.replace("%LINKS%", links_text)
     # write page template to file
+    logging.debug("Writing page template to file")
     with open(os.path.join(bookPath, pagenumber_padded + ".html"), "w") as f:
         f.write(page_template)
         f.close()
