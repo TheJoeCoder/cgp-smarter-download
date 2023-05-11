@@ -68,7 +68,7 @@ def download(url):
         return save_filename, filename_replaced
     # If we're still here, download has failed
     logging.error("Download failed of file " + url)
-    return None
+    return None, None
 
 # pager.js provides all data about pages, substrates, text links, etc
 # pager is located in one of two places:
@@ -279,7 +279,7 @@ for page_name, page_contents in pages.items():
     if (fpath1_full != None):
         substrate_url = "./" + fpath_rel
         logging.debug("Using substrate url " + substrate_url)
-    doText = (not has_notext) and has_textlayer
+    doText = (not has_notext) and has_textlayer and (not has_vectortext)
     if (doText):
         max_text_level = len(textsizes)
         text_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-textlayers/page" + pagenumber_padded + "_" + str(max_text_level) + "." + substrate_format
@@ -287,7 +287,7 @@ for page_name, page_contents in pages.items():
         if (fpath2_full != None):
             text_url = "./" + fpath_rel
             logging.debug("Using text url " + text_url)
-    doVectorText = (not has_notext) and has_vectortext
+    doVectorText = (not has_notext) and has_textlayer and has_vectortext
     if doVectorText:
         vector_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-vectorlayers/" + pagenumber_padded + ".svg"
         fpath3_full, fpath_rel = download(vector_url)
