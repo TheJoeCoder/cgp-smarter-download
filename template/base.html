@@ -7,11 +7,15 @@
     <title>%URLTITLE%</title>
     <style>
         html, body {
-            width: %WIDTH%;
-            height: %HEIGHT%;
+            width: %WIDTH%px;
+            height: %HEIGHT%px;
             margin: 0;
             padding: 0;
             background-color: %BACKGROUNDCOLOR%;
+        }
+        #background, #textlayer, #svglayer, #links {
+            max-width: 595px;
+            max-height: 841px;
         }
         #background {
             width: 100%;
