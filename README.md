@@ -16,6 +16,7 @@ Documentation is currently not finished and the software is still a work-in-prog
 * Download the manifest file from [here](https://library.cgpbooks.co.uk/digitalcontent/ACEHR42DF/assets/pager.js). Please note you must own the online edition of "Edexcel Anthology of Poetry: Conflict" and be signed into your account for this link to work, otherwise you can download the `pager.js` file from another book, noting the book's ID (the string which looks similar to `ACEHR42DF`, `CAR46DF`, etc.)
 * Rename this file to `pager.json` and put it in the git directory.
 * If you have downloaded another book than the Edexcel Conflict anthology, edit the line of the `download.py`, `convert.py`, and `merge.py` scripts near the top starting with `bookId = ` to include your book's ID instead of `ACEHR42DF` (temporary solution - args coming soon)
+* Put your cookies into a `cookies.txt` file. Guide [here](https://github.com/TheJoeCoder/cgp-download/blob/master/README.md#how-to-get-cookies).
 * Run the script: `python download.py`
 * Wait a few minutes for the script to finish and you should have HTML files containing the pages and some images and svg files in the `output` folder!
 * To convert each page to a PDF form, run `python convert.py`.
