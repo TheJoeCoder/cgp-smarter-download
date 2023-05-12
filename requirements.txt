@@ -1,1 +1,3 @@
-selenium>=4.9.1
+selenium==4.9.1
+webdriver-manager==3.8.6
+pypdf==3.8.1
