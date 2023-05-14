@@ -24,6 +24,21 @@ workspaceJson = json.loads(str(from_path("workspace.json").best()))
 
 logger.debug("Creating PdfWriter")
 merger = PdfWriter()
+merger.set_page_mode("/UseOutlines")
+
+def bookmark(children, parent):
+    for child in children:
+        logger.debug("Adding bookmark " + child["title"])
+        title = child["title"]
+        zeropage = child["page"] - 1 # Needed because pypdf numbering starts at 0, whereas the workspace.json numbering starts at 1
+        if (parent != None):
+            # Parent exists
+            new_parent = merger.add_outline_item(title, zeropage, parent=parent)
+        else:
+            # Parent does not exist
+            new_parent = merger.add_outline_item(title, zeropage)
+        if ("children" in child):
+            bookmark(child["children"], new_parent)
 
 # Merge pdfs into one
 for pdf in os.listdir(os.path.join("output", bookId)):
@@ -34,12 +49,7 @@ for pdf in os.listdir(os.path.join("output", bookId)):
 # TODO: Page labels (pager.json)
 
 # Add bookmarks
-for bookmark in workspaceJson["toc"]["children"]:
-    title = bookmark["title"]
-    page = bookmark["page"]
-    zero_page = page - 1
-    logger.debug("Adding bookmark " + title)
-    merger.add_outline_item(title, zero_page) # TODO: Add children bookmarks
+bookmark(workspaceJson["toc"]["children"], None)
 
 logger.debug("Writing output file")
 merger.write(os.path.join("output", bookId + ".pdf"))
