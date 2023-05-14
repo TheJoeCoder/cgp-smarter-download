@@ -14,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 logger.debug("Loading ChromeDriver")
 driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
 
-bookId = "ACEHR42DF"
+bookId = "CAR46DF"
 
 if (not os.path.exists(os.path.join("output", bookId))):
     logger.error("Output folder does not exist. Please run the download.py script first.")
@@ -66,4 +66,6 @@ for page_name, page_contents in pages.items():
         pdfFile.write(base64.b64decode(base64_pdf))
         pdfFile.close()
 
+logger.info("Closing ChromeDriver")
 driver.quit()
+logger.info("Done!")
