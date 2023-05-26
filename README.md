@@ -13,26 +13,26 @@ Documentation is currently not finished and the software is still a work-in-prog
 * Install Python and Git if you don't already have them.
 * Clone the repo: `git clone https://github.com/TheJoeCoder/cgp-smarter-download`
 * CD into directory: `cd cgp-smarter-download`
-* Download the pager file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/pager.js). Please note you must own the online edition of "GCSE AQA Chemistry - Revision Guide (Higher Level) \[CAR46DF\]" and be signed into your account for this link to work, otherwise you can download the `pager.js` file from another book, noting the book's ID (the string which looks similar to `ACEHR42DF`, `CAR46DF`, etc.)
+* Download the pager file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/pager.js), replacing `CAR46DF` in the URL with the ID of the book you're trying to download.
 * Rename this file to `pager.json` and put it in the git directory.
-* In the same manner, download the workspace file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/workspace.js), rename to workspace.json, and place into the same directory.
-* If you have downloaded another book than the GCSE Chemistry book referenced above, edit the line of the `download.py`, `convert.py`, and `merge.py` scripts near the top starting with `bookId = ` to include your book's ID instead of `CAR46DF` (temporary solution - args coming soon)
-* Put your cookies into a `cookies.txt` file. Guide [here](https://github.com/TheJoeCoder/cgp-download/blob/master/README.md#how-to-get-cookies).
+* In the same manner, download the workspace file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/workspace.js), rename to workspace.json, and place into the same directory. Again, change the URL with a different ID for a different book
+* Copy the `book.py.example` file to `book.py`, and then change the book id to the book ID you're trying to download e.g. `bookId = "CAR46DF"`
+* Put your cookies into a `cookies.txt` file. Guide [here](https://github.com/TheJoeCoder/cgp-download/blob/master/README.md#how-to-get-cookies) until I move it over to this page.
 * Run the script: `python download.py`
-* Wait a few minutes for the script to finish and you should have HTML files containing the pages and some images and svg files in the `output` folder!
+* Wait a few minutes for the script to finish and you should have HTML files containing the pages and some images and svg files in the `output` folder! (**Note:** If you see a lot of 403 errors, this means your cookies have expired or are invalid. Try getting the cookies again.)
 * To convert each page to a PDF form, run `python convert.py`.
 * To merge all pages into one PDF, run `python merge.py` (work-in-progress).
 
 ## Programming Progress
 - [x] Parse pager.js manifest
 - [x] Download books
-- [ ] Download pager.js manifest from web
+- [ ] Download pager.js and workspace.js manifests from web
 - [x] Convert HTML to PDF
 - [x] Merge PDFs
 - [ ] Add page labels (FC, IFC, Contents-i, etc.)
 - [x] Add bookmarks
 - [ ] Add Links
 - [ ] Make code cleaner (especially download.py)
-- [ ] Book autoselection
+- [ ] Book browser/selection
 - [ ] Fancy GUI
 - [ ] 403 Forbidden (Cookie expiration/Access Denied) handling

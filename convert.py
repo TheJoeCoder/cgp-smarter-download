@@ -14,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 logger.debug("Loading ChromeDriver")
 driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
 
-bookId = "CAR46DF"
+from book import bookId
 
 if (not os.path.exists(os.path.join("output", bookId))):
     logger.error("Output folder does not exist. Please run the download.py script first.")
@@ -50,13 +50,14 @@ for page_name, page_contents in pages.items():
     driver.get(page_url)
     driver.implicitly_wait(0.5)
     print_options = PrintOptions()
-    print_options.page_width = float(book_width) / 72 # 72 PPI
-    print_options.page_height = float(book_height) / 72 # 72 PPI
+    print_options.page_width = float(book_width) / 72 # 72 PPI (Converted up later)
+    print_options.page_height = float(book_height) / 72 # 72 PPI (Converted up later)
     print_options.margin_bottom = 0
     print_options.margin_top = 0
     print_options.margin_left = 0
     print_options.margin_right = 0
     print_options.shrink_to_fit = True # Just in case of rounding errors
+    # print_options.scale = 1.54 # 1 inch = 2.54 cm
     print_options.page_ranges = [1] # Just in case of rounding errors
     print_options.background = True
     logger.debug("Printing page " + page_name)

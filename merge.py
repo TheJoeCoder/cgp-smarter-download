@@ -1,14 +1,14 @@
 import json, os, logging
 from charset_normalizer import from_path
 
-from pypdf import PdfWriter
+from pypdf import PdfWriter, PdfReader
 
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-bookId = "CAR46DF"
+from book import bookId
 
 if (not os.path.exists(os.path.join("output", bookId))):
     logger.error("Output folder does not exist. Please run the download.py script first.")
@@ -44,7 +44,13 @@ def bookmark(children, parent):
 for pdf in os.listdir(os.path.join("output", bookId)):
     if (pdf.endswith(".pdf")):
         logger.debug("Merging " + pdf)
-        merger.append(os.path.join("output", bookId, pdf))
+        # Read file
+        pg_rd = PdfReader(os.path.join("output", bookId, pdf))
+        pg = pg_rd.pages[0]
+        # And now, a hacky inches-printed-as-cm to inches conversion
+        pg.scale_by(2.54)
+        # Append pdf to merger
+        merger.add_page(pg)
 
 # TODO: Page labels (pager.json)
 

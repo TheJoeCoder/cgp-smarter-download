@@ -5,7 +5,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-bookId = "CAR46DF"
+from book import bookId
 
 logger.debug("Opening template file base.html")
 with open("template/base.html", "r") as baseFile:
