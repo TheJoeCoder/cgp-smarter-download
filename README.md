@@ -26,13 +26,15 @@ Documentation is currently not finished and the software is still a work-in-prog
 ## Programming Progress
 - [x] Parse pager.js manifest
 - [x] Download books
-- [ ] Download pager.js and workspace.js manifests from web
+- [x] Download pager.js and workspace.js manifests from web
 - [x] Convert HTML to PDF
 - [x] Merge PDFs
 - [ ] Add page labels (FC, IFC, Contents-i, etc.)
 - [x] Add bookmarks
 - [ ] Add Links
 - [ ] Make code cleaner (especially download.py)
-- [ ] Book browser/selection
+- [ ] Book browser/selection (userguid and signature collection)
+- [ ] Remove collecting cookie dependency (username+password login to gain userguid and signature)
+- [ ] Book Frontend page parsing (/digitalaccess/{id}/Online/: useful info contained within...)
 - [ ] Fancy GUI
 - [ ] 403 Forbidden (Cookie expiration/Access Denied) handling
