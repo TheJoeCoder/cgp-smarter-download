@@ -61,7 +61,7 @@ for pdf in os.listdir(os.path.join("output", bookId)):
         # Read file
         pg_rd = PdfReader(os.path.join("output", bookId, pdf))
         pg = pg_rd.pages[0]
-        # And now, a hacky inches-printed-as-cm to inches conversion
+        # And now, a hacky inches-printed-as-cm back-to-inches conversion
         pg.scale_by(2.54)
         # Append pdf to merger
         merger.add_page(pg)
