@@ -23,12 +23,18 @@ pagerfile_path = pagerlib.get_pager_file(bookId)
 if (pagerfile_path is None):
     logger.error("Could not find pager file")
     exit(1)
-with open("pager.json", "r") as pagerFile:
+with open(pagerfile_path, "r") as pagerFile:
     pagerJson = json.loads(pagerFile.read())
     pagerFile.close()
 
 logger.debug("Opening workspace.json file")
-workspaceJson = json.loads(str(from_path("workspace.json").best()))
+workspacefile_path = pagerlib.get_workspace_file(bookId)
+if (workspacefile_path is None):
+    logger.error("Could not find workspace file")
+    exit(1)
+with open(workspacefile_path, "r") as workspaceFile:
+    workspaceJson = json.loads(workspaceFile.read())
+    workspaceFile.close()
 
 logger.debug("Creating PdfWriter")
 merger = PdfWriter()

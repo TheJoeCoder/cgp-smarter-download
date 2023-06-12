@@ -29,7 +29,7 @@ pagerfile_path = pagerlib.get_pager_file(bookId)
 if (pagerfile_path is None):
     logger.error("Could not find pager file")
     exit(1)
-with open("pager.json", "r") as pagerFile:
+with open(pagerfile_path, "r") as pagerFile:
     pagerJson = json.loads(pagerFile.read())
     pagerFile.close()
 
