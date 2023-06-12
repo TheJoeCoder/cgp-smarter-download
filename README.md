@@ -24,17 +24,19 @@ Documentation is currently not finished and the software is still a work-in-prog
 * To merge all pages into one PDF, run `python merge.py` (work-in-progress).
 
 ## Programming Progress
+Ordered in level of importance/difficulty
+- [ ] Add page labels (FC, IFC, Contents-i, etc.)
+- [ ] Add Links
+- [ ] 403 Forbidden (Cookie expiration/Access Denied) handling
+- [ ] Book browser/selection (userguid and signature collection)
+- [ ] Remove collecting cookie dependency (username+password login to gain userguid and signature)
+- [ ] For that matter, work out how userguids and signatures work at all
+- [ ] Book Frontend page + flippingbook index page parsing (/digitalaccess/{id}/Online/ and /digitalcontent/{id}/index.html: useful info contained within...)
+- [ ] Fancy GUI
+- [ ] Make code cleaner (especially download.py)
 - [x] Parse pager.js manifest
 - [x] Download books
 - [x] Download pager.js and workspace.js manifests from web
 - [x] Convert HTML to PDF
 - [x] Merge PDFs
-- [ ] Add page labels (FC, IFC, Contents-i, etc.)
 - [x] Add bookmarks
-- [ ] Add Links
-- [ ] Make code cleaner (especially download.py)
-- [ ] Book browser/selection (userguid and signature collection)
-- [ ] Remove collecting cookie dependency (username+password login to gain userguid and signature)
-- [ ] Book Frontend page parsing (/digitalaccess/{id}/Online/: useful info contained within...)
-- [ ] Fancy GUI
-- [ ] 403 Forbidden (Cookie expiration/Access Denied) handling
