@@ -13,20 +13,18 @@ Documentation is currently not finished and the software is still a work-in-prog
 * Install Python and Git if you don't already have them.
 * Clone the repo: `git clone https://github.com/TheJoeCoder/cgp-smarter-download`
 * CD into directory: `cd cgp-smarter-download`
-* Download the pager file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/pager.js), replacing `CAR46DF` in the URL with the ID of the book you're trying to download.
-* Rename this file to `pager.json` and put it in the git directory.
-* In the same manner, download the workspace file from [here](https://library.cgpbooks.co.uk/digitalcontent/CAR46DF/assets/workspace.js), rename to workspace.json, and place into the same directory. Again, change the URL with a different ID for a different book
 * Copy the `book.py.example` file to `book.py`, and then change the book id to the book ID you're trying to download e.g. `bookId = "CAR46DF"`
-* Put your cookies into a `cookies.txt` file. Guide [here](https://github.com/TheJoeCoder/cgp-download/blob/master/README.md#how-to-get-cookies) until I move it over to this page.
+* Put your cookies into a `cookies.txt` file. Guide [here](https://github.com/TheJoeCoder/cgp-download/blob/master/README.md#how-to-get-cookies) until I move it over to this page. (**Note:** Due to how the website is programmed, cookies are only valid on a per-book basis - you must capture your cookies every time you download a new book.)
 * Run the script: `python download.py`
 * Wait a few minutes for the script to finish and you should have HTML files containing the pages and some images and svg files in the `output` folder! (**Note:** If you see a lot of 403 errors, this means your cookies have expired or are invalid. Try getting the cookies again.)
-* To convert each page to a PDF form, run `python convert.py`.
+* To convert each page to a PDF form, run `python convert.py`. This will download and open an instance of Chromium controlled by Python. Don't close it - just wait for it to finish going through all the pages.
 * To merge all pages into one PDF, run `python merge.py` (work-in-progress).
 
 ## Programming Progress
 Ordered in level of importance/difficulty
 - [ ] Add page labels (FC, IFC, Contents-i, etc.)
 - [ ] Add Links
+- [ ] Order page based on "structure" pager page def, not on order of pages
 - [ ] 403 Forbidden (Cookie expiration/Access Denied) handling
 - [ ] Book browser/selection (userguid and signature collection)
 - [ ] Remove collecting cookie dependency (username+password login to gain userguid and signature)
