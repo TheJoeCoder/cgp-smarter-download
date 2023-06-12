@@ -1,9 +1,13 @@
 import json, os, requests, logging
 
+import pagerlib
+
+import logconf
+
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logconf.loggerLevel)
 
 from book import bookId
 
@@ -32,17 +36,7 @@ with open("template/link.html", "r") as linkFile:
     linkHtml = linkFile.read()
     linkFile.close()
 
-logger.debug("Opening Cookies")
-with open("cookies.txt", "r") as cookiesFile:
-    cookies_contents = cookiesFile.read()
-    cookies_array = cookies_contents.split(";")
-    logger.info("Loading " + str(len(cookies_array)) + " cookies")
-    cookies = {}
-    for cookie in cookies_array:
-        cookie_split = cookie.split("=")
-        cookies[cookie_split[0].strip()] = cookie_split[1]
-    cookiesFile.close()
-logger.info("Cookies loaded")
+from cookielib import cookies
 
 if (not os.path.exists("output")):
     os.mkdir("output")
@@ -90,6 +84,10 @@ def download(url, force=False):
 # https://library.cgpbooks.co.uk/digitalcontent/{bookId}/assets/pager.js
 # https://library.cgpbooks.co.uk/digitalcontent/{bookId}/assets/common/pager.js
 logger.debug("Opening pager.json file")
+pagerfile_path = pagerlib.get_pager_file(bookId)
+if (pagerfile_path is None):
+    logger.error("Could not find pager file")
+    exit(1)
 with open("pager.json", "r") as pagerFile:
     pagerJson = json.loads(pagerFile.read())
     pagerFile.close()

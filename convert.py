@@ -1,5 +1,9 @@
 import json, os, logging, base64
 
+import pagerlib
+
+import logconf
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromiumService
 from selenium.webdriver.common.print_page_options import PrintOptions
@@ -9,7 +13,7 @@ from webdriver_manager.core.utils import ChromeType
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logconf.loggerLevel)
 
 logger.debug("Loading ChromeDriver")
 driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
@@ -21,6 +25,10 @@ if (not os.path.exists(os.path.join("output", bookId))):
     exit()
 
 logger.debug("Opening pager.json file")
+pagerfile_path = pagerlib.get_pager_file(bookId)
+if (pagerfile_path is None):
+    logger.error("Could not find pager file")
+    exit(1)
 with open("pager.json", "r") as pagerFile:
     pagerJson = json.loads(pagerFile.read())
     pagerFile.close()
