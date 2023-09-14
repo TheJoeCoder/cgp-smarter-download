@@ -295,7 +295,7 @@ for page_name, page_contents in pages.items():
     doText = (not has_notext) and has_textlayer and (not has_vectortext)
     if (doText):
         max_text_level = len(textsizes)
-        text_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-textlayers/page" + pagenumber_padded + "_" + str(max_text_level) + "." + substrate_format
+        text_url = "https://library.cgpbooks.co.uk/digitalcontent/" + bookId + "/assets/common/page-textlayers/page" + pagenumber_padded + "_" + str(max_text_level) + "." + "png" # + substrate_format
         fpath2_full, fpath_rel = download(text_url)
         if (fpath2_full != None):
             text_url = "./" + fpath_rel
