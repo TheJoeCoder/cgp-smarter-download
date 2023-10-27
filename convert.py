@@ -5,10 +5,8 @@ import pagerlib
 import logconf
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromiumService
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.print_page_options import PrintOptions
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.utils import ChromeType
 
 logging.basicConfig(level=logging.INFO)
 
@@ -16,7 +14,12 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logconf.loggerLevel)
 
 logger.debug("Loading ChromeDriver")
-driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
+opts = ChromeOptions()
+opts.browser_version = 114
+#opts.add_argument("--headless")
+#opts.add_argument("--kiosk-printing")
+#opts.add_argument("--print-to-pdf")
+driver = webdriver.Chrome(options=opts)
 
 from book import bookId
 
