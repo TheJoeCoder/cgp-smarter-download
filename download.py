@@ -48,6 +48,8 @@ if (not os.path.exists(bookPath)):
     os.mkdir(bookPath)
     logger.debug("Created book output directory")
 
+failed_downloads = []
+
 # Download a file
 # Unless force is true, will not download if file already exists
 # Returns the full path and relative path of the downloaded file
@@ -77,6 +79,7 @@ def download(url, force=False):
         return save_filename, filename_replaced
     # If we're still here, download has failed
     logger.error("Download failed of file " + url)
+    failed_downloads.append(url)
     return None, None
 
 # pager.js provides all data about pages, substrates, text links, etc
@@ -323,8 +326,8 @@ for page_name, page_contents in pages.items():
         page_template = page_template.replace("%SVG%", "")
     page_template = page_template.replace("%URLTITLE%", urlheader)
     page_template = page_template.replace("%DISPLAYNAME%", displayname)
-    page_template = page_template.replace("%WIDTH%", str(width))
-    page_template = page_template.replace("%HEIGHT%", str(height))
+    page_template = page_template.replace("%WIDTH%", str(width))# / 72)) # 72 PPI
+    page_template = page_template.replace("%HEIGHT%", str(height))# / 72))
     page_template = page_template.replace("%BACKGROUNDCOLOR%", background_colour)
     page_template = page_template.replace("%HOVER_COLOUR%", str(link_hover_colour))
     links_text = ""
@@ -352,7 +355,10 @@ for page_name, page_contents in pages.items():
         f.write(page_template)
         f.close()
 
-#### TODO: add code to merge all into pdf with bookmarks ####
+logger.info("Done!")
+logger.info("Failed Downloads: " + str(len(failed_downloads)))
+for download in failed_downloads:
+    logger.info(download)
 
 ###
 # substrate/text layer size is the 1-based index of the size in the sizes array
