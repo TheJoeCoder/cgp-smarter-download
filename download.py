@@ -64,7 +64,8 @@ def download(url, force=False):
         logger.debug("File already exists, skipping")
         return save_filename, filename_replaced
     # Make request
-    res = requests.get(url, cookies=cookies)
+    headers = {'Cookie': cookies}
+    res = requests.get(url, headers=headers)
     logger.debug("Response code: " + str(res.status_code))
     logger.debug("Response length: " + str(len(res.content)))
     if (res.status_code == 200):
@@ -168,7 +169,7 @@ if ("defaults" in pages):
     if ("backgroundColor" in page_contents):
         default_background_colour = page_contents["backgroundColor"]
     if ("wide" in page_contents):
-        default_is_wide = page_contents["slideDelay"]
+        default_is_wide = page_contents["wide"]
     if ("pageResize" in page_contents):
         default_pageresize = page_contents["pageResize"]
     if ("shadowDepth" in page_contents):
@@ -336,17 +337,19 @@ for page_name, page_contents in pages.items():
         lnk_height = link["rect"][1]
         lnk_x = link["rect"][2]
         lnk_y = link["rect"][3]
-        lnk_url = link["url"]
+        lnk_url = link.get("url")
         lnk_zindex = link["zIndex"]
         link_template = linkHtml.replace("%WIDTH%", str(lnk_width))
         link_template = link_template.replace("%HEIGHT%", str(lnk_height))
         link_template = link_template.replace("%X%", str(lnk_x))
         link_template = link_template.replace("%Y%", str(lnk_y))
-        link_template = link_template.replace("%URL%", lnk_url)
+        if lnk_url:
+            link_template = link_template.replace("%URL%", lnk_url)
         link_template = link_template.replace("%TARGET%", link_target)
         link_template = link_template.replace("%ZINDEX%", str(lnk_zindex))
         links_text += link_template
-        logger.debug("Generated link attribute for " + lnk_url)
+        if lnk_url:
+            logger.debug("Generated link attribute for " + lnk_url)
     # page_template = page_template.replace("%LINKS%", links_text)
     page_template = page_template.replace("%LINKS%", "") # TODO: fix links
     # write page template to file

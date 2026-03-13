@@ -40,7 +40,8 @@ def download_file_test_url(urls, bookid, output_file):
         try:
             book_url = url.replace("{id}", bookid)
             logger.debug("Trying " + book_url)
-            workspace = requests.get(book_url, cookies=cookies).text
+            headers = {'Cookie': cookies}
+            workspace = requests.get(book_url, headers=headers).text
             if "NoSuchKey" in workspace:
                 logger.info("Failed to get workspace file from " + book_url)
                 continue
@@ -48,7 +49,8 @@ def download_file_test_url(urls, bookid, output_file):
             with open(output_file, 'w') as workspace_file:
                 workspace_file.write(workspace)
             return output_file
-        except:
+        except Exception as error:
+            print("An exception occurred:", error)
             logger.info("Failed to get workspace file from " + book_url)
             continue
     logger.error("Failed to get file file for " + bookid + " from any URL (tried " + str(len(urls)) + ")")
